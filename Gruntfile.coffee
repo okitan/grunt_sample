@@ -35,6 +35,21 @@ module.exports = (grunt) ->
           base: "<%= config.dist %>"
           livereload: false
 
+    esteWatch:
+      options:
+         dirs: [ "<%= config.app %>/**" ]
+         livereload:
+           enabled: true
+           port: 35729
+           extensions: [ 'jade', 'scss', 'coffee' ]
+      jade: (filepath) ->
+        [ "newer:jade:compile" ]
+      scss: (filepath) ->
+        [ "newer:sass:compile" ]
+      coffee: (filepath) ->
+        [ "newer:coffee:compile" ]
+
+
     # pre build
     clean:
       tmp:  config.tmp
@@ -52,6 +67,7 @@ module.exports = (grunt) ->
       compile: [
         'jade:compile'
         'sass:compile'
+        'coffee:compile'
       ]
 
     sass:
@@ -64,6 +80,18 @@ module.exports = (grunt) ->
             cwd: config.app
             src: "styles/*.scss"
             ext: ".css"
+          }
+        ]
+    coffee:
+      options:
+        dest: config.tmp
+      compile:
+        files: [
+          {
+            expand: true
+            cwd: config.app
+            src: "scripts/*.coffee"
+            ext: ".js"
           }
         ]
     jade:
