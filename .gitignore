@@ -3,3 +3,7 @@ node_modules
 bower_components
 dist
 tmp
+
+# ruby
+.ruby-gemset
+.ruby-version
