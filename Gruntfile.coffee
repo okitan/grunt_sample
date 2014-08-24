@@ -43,7 +43,10 @@ module.exports = (grunt) ->
            port: 35729
            extensions: [ 'jade', 'scss', 'coffee' ]
       jade: (filepath) ->
-        [ "newer:jade:compile" ]
+        if filepath.indexOf("layouts")
+          [ "jade:compile", "wiredep:compile" ]
+        else
+          [ "newer:jade:compile", "wiredep:compile" ]
       scss: (filepath) ->
         [ "newer:sass:compile" ]
       coffee: (filepath) ->
