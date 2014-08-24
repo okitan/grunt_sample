@@ -8,7 +8,7 @@ module.exports = (grunt) ->
   config =
     app:  "app"
     dist: "dist"
-    tmp:  ".tmp"
+    tmp:  "tmp"
 
   grunt.initConfig
     config: config
@@ -37,14 +37,32 @@ module.exports = (grunt) ->
 
     # grunt build
     concurrent:
-      build: [ 'wiredep' ]
+      compile: [
+        'wiredep:compile'
+        'jade:compile'
+      ]
+      minify: [
+      ]
+
+    jade:
+      options:
+        pretty: true
+      compile:
+        files: [
+          expand: true
+          cwd:  "<%= config.app %>/jade"
+          src:  "*.jade"
+          dest: config.tmp
+          ext: '.html'
+        ]
 
     wiredep:
-      target:
-        dest: config.tmp
+      compile:
         src: [
-          'app/index.html',
+          "<%= config.app %>/index.html"
+          "<%= config.app %>/jade/layouts/{head,foot}.jade"
         ]
+        warnings: true
 
   # user defined tasks
   grunt.registerTask "default", [
@@ -52,15 +70,15 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "build", [
-    "concurrent:build",
+    "concurrent"
   ]
 
   grunt.registerTask "serve", (target) ->
     if target is "dist"
-      grunt.task.run([
+      grunt.task.run [
         "build"
         "connect:dist:keepalive"
-      ])
+      ]
     else
       grunt.task.run [
         "build"
