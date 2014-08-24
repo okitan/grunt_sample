@@ -47,10 +47,9 @@ module.exports = (grunt) ->
           ]
         ]
 
-    # grunt build
+    # build
     concurrent:
       compile: [
-        'wiredep:compile'
         'jade:compile'
       ]
       minify: [
@@ -67,14 +66,39 @@ module.exports = (grunt) ->
           dest: config.tmp
           ext: '.html'
         ]
-
-    wiredep:
+    wiredep: # this overwrite file itself...
       compile:
         src: [
-          "<%= config.app %>/index.html"
-          "<%= config.app %>/jade/layouts/{head,foot}.jade"
+          "<%= config.tmp %>/{,*/}*.html"
         ]
-        warnings: true
+
+    # post build
+    copy:
+      dist:
+        files: [
+          {
+            expand: true
+            dot:    true
+            cwd:    config.app
+            dest:   config.dist
+            src: [
+              ".htaccess"
+              "*.{ico,png,txt}"
+               "images/{,*/}*.webp"
+              "{,*/}*.html"
+              "styles/fonts/{,*/}*.*"
+            ]
+          }
+          {
+            expand: true
+            cwd:    config.tmp
+            dest:   config.dist
+            src: [
+              "{,*/}*.html"
+            ]
+          }
+        ]
+
 
   # user defined tasks
   grunt.registerTask "default", [
@@ -82,8 +106,22 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "build", [
+    "preCompile"
+    "compile"
+    "postCompile"
+  ]
+
+  grunt.registerTask "preCompile", [
     "clean"
-    "concurrent"
+  ]
+
+  grunt.registerTask "compile", [
+    "concurrent:compile"
+    "wiredep"
+  ]
+
+  grunt.registerTask "postCompile", [
+    "copy:dist"
   ]
 
   grunt.registerTask "serve", (target) ->
@@ -95,7 +133,7 @@ module.exports = (grunt) ->
     else
       grunt.task.run [
         "clean:tmp"
-        "concurrent:compile"
+        "compile"
         "connect:livereload"
         "esteWatch"
       ]
