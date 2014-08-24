@@ -51,8 +51,21 @@ module.exports = (grunt) ->
     concurrent:
       compile: [
         'jade:compile'
+        'sass:compile'
       ]
 
+    sass:
+      options:
+        dest: config.tmp
+      compile:
+        files: [
+          {
+            expand: true
+            cwd: config.app
+            src: "styles/*.scss"
+            ext: ".css"
+          }
+        ]
     jade:
       options:
         pretty: true
