@@ -35,6 +35,18 @@ module.exports = (grunt) ->
           base: "<%= config.dist %>"
           livereload: false
 
+    # pre build
+    clean:
+      tmp:  config.tmp
+      dist:
+        files: [
+          dot: true
+          src: [
+            "<%= config.dist %>/*"
+            "!<%= config.dist %>/.git*"
+          ]
+        ]
+
     # grunt build
     concurrent:
       compile: [
@@ -70,6 +82,7 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "build", [
+    "clean"
     "concurrent"
   ]
 
@@ -81,7 +94,8 @@ module.exports = (grunt) ->
       ]
     else
       grunt.task.run [
-        "build"
+        "clean:tmp"
+        "concurrent:compile"
         "connect:livereload"
         "esteWatch"
       ]
