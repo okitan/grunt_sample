@@ -1,0 +1,15 @@
+{
+  "name": "sample_apps",
+  "version": "0.0.1",
+  "dependencies": {
+    "grunt-cli": "^0.1.13"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "bower install && grunt build"
+  }
+}
