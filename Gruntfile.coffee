@@ -52,8 +52,6 @@ module.exports = (grunt) ->
       compile: [
         'jade:compile'
       ]
-      minify: [
-      ]
 
     jade:
       options:
@@ -70,6 +68,31 @@ module.exports = (grunt) ->
       compile:
         src: [
           "<%= config.tmp %>/{,*/}*.html"
+        ]
+
+    useminPrepare:
+      options:
+        dest:    config.tmp
+        staging: config.tmp
+      html: "<%= config.tmp %>/index.html"
+    usemin:
+      html: "<%= config.tmp %>/{,*/}*.html"
+    concat:
+      options:
+        dest: config.tmp
+    cssmin:
+      options:
+        dest: config.tmp
+    uglify:
+      options:
+        dest: config.tmp
+    filerev:
+      options:
+        dest: config.dist
+      compile:
+        src: [
+          "<%= config.tmp %>/styles/{,*/}*.css"
+          "<%= config.tmp %>/scripts/{,*/}*.js"
         ]
 
     # post build
@@ -95,6 +118,8 @@ module.exports = (grunt) ->
             dest:   config.dist
             src: [
               "{,*/}*.html"
+              "styles/{,*/}*.css"
+              "scripts/{,*/}*.js"
             ]
           }
         ]
@@ -108,6 +133,7 @@ module.exports = (grunt) ->
   grunt.registerTask "build", [
     "preCompile"
     "compile"
+    "usemins"
     "postCompile"
   ]
 
@@ -118,6 +144,15 @@ module.exports = (grunt) ->
   grunt.registerTask "compile", [
     "concurrent:compile"
     "wiredep"
+  ]
+
+  grunt.registerTask "usemins", [
+    'useminPrepare'
+    'concat'
+    'cssmin'
+    'uglify'
+    'filerev'
+    'usemin'
   ]
 
   grunt.registerTask "postCompile", [
